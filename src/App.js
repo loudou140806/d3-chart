@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Pie3d from './component/pie'
+import Column3d from './component/column'
+import StackBar3d from './component/stackbar'
+import Combine3d from './component/combine/'
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Pie3d/>
+        <Column3d/>
+        <StackBar3d/>
+        <Combine3d/>
       </div>
     );
   }
