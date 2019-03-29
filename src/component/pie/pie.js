@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import $ from 'jquery'
 
 function pieTop(d, rx, ry, ir) {
   if (d.endAngle - d.startAngle === 0) return "M 0 0";
@@ -107,156 +108,100 @@ function pieInner(d, rx, ry, h, ir) {
 }
 
 function getPercent(d) {
-  return d.endAngle - d.startAngle > 0.2
-    ? Math.round((1000 * (d.endAngle - d.startAngle)) / (Math.PI * 2)) / 10 +
-        "%"
-    : "";
+  return d.endAngle - d.startAngle > 0.2 ?
+    Math.round((1000 * (d.endAngle - d.startAngle)) / (Math.PI * 2)) / 10 +
+    "%" :
+    "";
 }
 
-// Donut3D.transition = function(id, data, rx, ry, h, ir) {
-//   function arcTweenInner(a) {
-//     var i = d3.interpolate(this._current, a);
-//     this._current = i(0);
-//     return function(t) {
-//       return pieInner(i(t), rx + 0.5, ry + 0.5, h, ir);
-//     };
-//   }
-//   function arcTweenTop(a) {
-//     var i = d3.interpolate(this._current, a);
-//     this._current = i(0);
-//     return function(t) {
-//       return pieTop(i(t), rx, ry, ir);
-//     };
-//   }
-//   function arcTweenOuter(a) {
-//     var i = d3.interpolate(this._current, a);
-//     this._current = i(0);
-//     return function(t) {
-//       return pieOuter(i(t), rx - 0.5, ry - 0.5, h);
-//     };
-//   }
-//   function textTweenX(a) {
-//     var i = d3.interpolate(this._current, a);
-//     this._current = i(0);
-//     return function(t) {
-//       return 0.6 * rx * Math.cos(0.5 * (i(t).startAngle + i(t).endAngle));
-//     };
-//   }
-//   function textTweenY(a) {
-//     var i = d3.interpolate(this._current, a);
-//     this._current = i(0);
-//     return function(t) {
-//       return 0.6 * rx * Math.sin(0.5 * (i(t).startAngle + i(t).endAngle));
-//     };
-//   }
+export default function Donut3D(config) {
+  var id = config.id,
+    data = config.data,
+    width = config.width || 300,
+    height = config.height || 300,
+    x = config.x /*center x*/ ,
+    y = config.y /*center y*/ ,
+    rx = config.rx /*radius x*/ ,
+    ry = config.ry /*radius y*/ ,
+    h = config.h /*height*/ ,
+    ir = config.ir /*inner radius*/ ,
+    dimensions = config.dimensions,
+    legend = config.legend,
+    idName = id.substr(1, id.length),
+    series = data.map(item => item.label)
 
-//   var _data = d3
-//     .pie()
-//     .sort(null)
-//     .value(function(d) {
-//       return d.value;
-//     })(data);
-
-//   d3.select("#" + id)
-//     .selectAll(".innerSlice")
-//     .data(_data)
-//     .transition()
-//     .duration(750)
-//     .attrTween("d", arcTweenInner);
-
-//   d3.select("#" + id)
-//     .selectAll(".topSlice")
-//     .data(_data)
-//     .transition()
-//     .duration(750)
-//     .attrTween("d", arcTweenTop);
-
-//   d3.select("#" + id)
-//     .selectAll(".outerSlice")
-//     .data(_data)
-//     .transition()
-//     .duration(750)
-//     .attrTween("d", arcTweenOuter);
-
-//   d3.select("#" + id)
-//     .selectAll(".percent")
-//     .data(_data)
-//     .transition()
-//     .duration(750)
-//     .attrTween("x", textTweenX)
-//     .attrTween("y", textTweenY)
-//     .text(getPercent);
-// };
-
-export default function Donut3D (
-  id,
-  data,
-  x /*center x*/,
-  y /*center y*/,
-  rx /*radius x*/,
-  ry /*radius y*/,
-  h /*height*/,
-  ir /*inner radius*/
-) {
   var _data = d3
     .pie()
     .sort(null)
-    .value(function(d) {
-	  return d.value;
-	})(data);
-  var slices = d3
-    .select("#" + id)
+    .value(function (d) {
+      return d.value;
+    })(data);
+  var z = d3.scaleOrdinal().range(d3.schemeCategory10).domain(data.map(item => item.label))
+  if (legend != null && legend !== undefined && legend !== false) {
+    $("#Legend_" + idName).remove();
+    createLegend(id, series, z);
+  }
+
+  var svg = d3.select("#" + idName).append("svg").attr("width", width).attr("height", height)
+  var slices = svg
     .append("g")
     .attr("transform", "translate(" + x + "," + y + ")")
     .attr("class", "slices");
-  slices
-    .selectAll(".innerSlice")
-    .data(_data)
-    .enter()
-    .append("path")
-    .attr("class", "innerSlice")
-    .style("fill", function(d) {
-      return d3.hsl(d.data.color).darker(0.7);
-    })
-    .attr("d", function(d) {
-      return pieInner(d, rx + 0.5, ry + 0.5, h, ir);
-    })
-    .each(function(d) {
-      this._current = d;
-    });
 
+
+  if (dimensions === '3d' || dimensions === '3D') {
+    slices
+      .selectAll(".innerSlice")
+      .data(_data)
+      .enter()
+      .append("path")
+      .attr("class", "innerSlice")
+      .style("fill", function (d) {
+        return d3.hsl(z(d.data.label)).darker(0.7);
+      })
+      .attr("d", function (d) {
+        return pieInner(d, rx + 0.5, ry + 0.5, h, ir);
+      })
+      .each(function (d) {
+        this._current = d;
+      });
+
+    slices
+      .selectAll(".outerSlice")
+      .data(_data)
+      .enter()
+      .append("path")
+      .attr("class", "outerSlice")
+      .style("fill", function (d) {
+        return d3.hsl(z(d.data.label)).darker(0.7);
+      })
+      .attr("d", function (d) {
+        return pieOuter(d, rx - 0.5, ry - 0.5, h);
+      })
+      .each(function (d) {
+        this._current = d;
+      });
+  }
   slices
     .selectAll(".topSlice")
     .data(_data)
     .enter()
     .append("path")
     .attr("class", "topSlice")
-    .style("fill", function(d) {
-      return d.data.color;
+    .style("fill", function (d) {
+      return z(d.data.label);
     })
-    .style("stroke", function(d) {
-      return d.data.color;
+    .style("stroke", function (d) {
+      return z(d.data.label);
     })
-    .attr("d", function(d) {
-      return pieTop(d, rx, ry, ir);
+    .attr("d", function (d) {
+      if (dimensions === '3d' || dimensions === '3D') {
+        return pieTop(d, rx, ry, ir)
+      } else {
+        return pieTop(d, rx, rx, ir);
+      }
     })
-    .each(function(d) {
-      this._current = d;
-    });
-
-  slices
-    .selectAll(".outerSlice")
-    .data(_data)
-    .enter()
-    .append("path")
-    .attr("class", "outerSlice")
-    .style("fill", function(d) {
-      return d3.hsl(d.data.color).darker(0.7);
-    })
-    .attr("d", function(d) {
-      return pieOuter(d, rx - 0.5, ry - 0.5, h);
-    })
-    .each(function(d) {
+    .each(function (d) {
       this._current = d;
     });
 
@@ -266,14 +211,32 @@ export default function Donut3D (
     .enter()
     .append("text")
     .attr("class", "percent")
-    .attr("x", function(d) {
+    .attr("x", function (d) {
       return 0.6 * rx * Math.cos(0.5 * (d.startAngle + d.endAngle));
     })
-    .attr("y", function(d) {
+    .attr("y", function (d) {
       return 0.6 * ry * Math.sin(0.5 * (d.startAngle + d.endAngle));
     })
     .text(getPercent)
-    .each(function(d) {
+    .each(function (d) {
       this._current = d;
     });
 };
+
+function createLegend(id, series, colorRange) {
+  var z = d3.scaleOrdinal()
+    .range(colorRange);
+  var idName = id.substr(1, id.length);
+  $(id).after("<div id='Legend_" + idName + "' class='pmd-card-body' style='margin-top:0; margin-bottom:0;'></div>");
+  series.forEach(function (d) {
+    var cloloCode = z(d); //eslint-disable-next-line 
+    $("#Legend_" + idName).append("<span class='team-graph team1' style='display: inline-block; margin-right:10px;'>\
+    <span style='background:" +
+      colorRange(d) + //eslint-disable-next-line 
+      ";width: 10px;height: 10px;display: inline-block;vertical-align: middle;'>&nbsp;</span>\
+    <span style='padding-top: 0;font-family:Source Sans Pro, sans-serif;font-size: 13px;display: inline;'>" +
+      d + //eslint-disable-next-line 
+      " </span>\
+</span>");
+  });
+}

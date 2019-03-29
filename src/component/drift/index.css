@@ -1,0 +1,6 @@
+.grid path {
+    stroke-width: 0;
+}
+.grid line{
+    stroke: steelblue;
+}

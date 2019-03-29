@@ -1,33 +1,37 @@
 import React, {
-  Component
+  Component,
+  Fragment
 } from "react";
 import CombineD3 from "./combine";
-import groupChartData from "./data";
-import "./index.scss";
+import data from "./data";
+import "./index.css";
 import $ from 'jquery';
 
 class index extends Component {
   componentDidMount() {
+
     $("#combine").empty();
-    var barChartConfig = {
-      mainDiv: "#combine",
-      colorRange: ["#2a98cd", "#df7247"],
-      data: groupChartData,
-      columnsInfo: ['series1', 'series2'],
-      xAxis: "over",
-      yAxis: "runs",
+    var combineConfig = {
+      id: "#combine",
+      data: data,
       width: 600,
       height: 300,
-      label: {
-        xAxis: "Over",
-        yAxis: ["y-axis1","y-axis2"]
-      },
-      requireLegend: true
+      legend: true
     };
-    new CombineD3(barChartConfig);
+    var combine3DConfig = {
+      ...combineConfig,
+      dimensions: '3d',
+      id: '#combine3d'
+    }
+
+    new CombineD3(combineConfig);
+    new CombineD3(combine3DConfig);
   }
   render() {
-    return <div id="combine"></div>;
+    return <Fragment>
+      <div id = "combine" > </div>
+      <div id = "combine3d" > </div>
+    </Fragment>
   }
 }
 

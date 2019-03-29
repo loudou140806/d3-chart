@@ -1,41 +1,21 @@
-export default [{
-    "series1": 8,
-    "series2": 15,
-    "over": 1
+export default {
+  xAxis: {
+    title: 'x-axis-title'
+  },
+  yAxis: [{
+    title: 'y-axis-title'
+  },{
+    title: 'y1-axis-title'
+  },
+],
+  category: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  series: [{
+    name: 'series1',
+    type: 'column',
+    data: [8, 7, 4, 19, 3, 12, 4, 5, 2, 10]
   }, {
-    "series1": 7,
-    "series2": 2,
-    "over": 2
-  }, {
-    "series1": 4,
-    "series2": 55,
-    "over": 3
-  }, {
-    "series1": 19,
-    "series2": 8,
-    "over": 4
-  }, {
-    "series1": 3,
-    "series2": 7,
-    "over": 5
-  }, {
-    "series1": 6,
-    "series2": 1,
-    "over": 6
-  }, {
-    "series1": 7,
-    "series2": 6,
-    "over": 7
-  }, {
-    "series1": 13,
-    "series2": 2,
-    "over": 8
-  }, {
-    "series1": 1,
-    "series2": 8,
-    "over": 9
-  }, {
-    "series1": 8,
-    "series2": 9,
-    "over": 10
-  }];
+    name: 'series2',
+    type: 'line',
+    data: [2, 1, 14, 9, 13, 12, 4, 15, 2, 5]
+  }]
+}

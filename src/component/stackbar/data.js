@@ -1,5 +1,3 @@
-// date	total	disease	wounds	other
-
 export default  [
     {
       date: "2017-06-30T18:30:00.000Z",

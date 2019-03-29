@@ -1,14 +1,29 @@
-import React, { Component } from "react";
-import "./index.less";
+import React, { Component, Fragment } from "react";
+import "./index.css";
 import ColumnD3 from "./column";
 import data from "./data";
 
 class index extends Component {
   componentDidMount() {
-    ColumnD3(data);
+    new ColumnD3({
+      id: "#column",
+      data: data,
+      width: 600,
+      height: 300,
+    });
+    new ColumnD3({
+      id: "#column3d",
+      data: data,
+      width: 600,
+      height: 300,
+      dimensions: '3d'
+    });
   }
   render() {
-    return <div className="dviz" id="column" />;
+    return <Fragment>
+    <div className="dviz" id="column" />
+    <div className="dviz" id="column3d" />
+    </Fragment>
   }
 }
 

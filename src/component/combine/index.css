@@ -1,0 +1,13 @@
+.combine .y1-axis .domain,.combine .y1-axis line{
+    stroke: #ff7f0e;
+}
+.combine .y1-axis g text{
+    fill: #ff7f0e;
+}
+.combine .y-axis .domain,.combine .y-axis line{
+    stroke: #2a98cd;
+}
+.combine .y-axis g text{
+    fill: #2a98cd;
+}
+
